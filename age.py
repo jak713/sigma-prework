@@ -3,19 +3,30 @@
 from datetime import datetime
 import sys
 
-today = datetime.today()
-print(f"Today's date: {today.day}-{today.month}-{today.year}")
+def print_results(today, date):
+    print(f"Today's date: {today.day}-{today.month}-{today.year}")
+    print(f"DOB given: {date.day}-{date.month}-{date.year}")
+    age = int(timedelta.days/365.25)
 
+    if age < 120:
+        print(f"Age: {age}")
+    else:
+        print(f"Either there is a vampire among us, or something is wrong with your input.\nAge: {age}")
+
+# Gather necessary arguments first, if at any point this fails, the program states the error and gracefully exits.
 try:
+    today = datetime.today()
+
     argument = sys.argv[1]
     date = datetime.strptime(argument, "%d-%m-%Y")
-    print(f"DOB given: {date.day}-{date.month}-{date.year}")
+    if date > today:
+        raise ValueError(f"Date ({date}) is invalid - given date cannot be in the future.")
+    
     timedelta = today - date
-    print(f"Age: {int(timedelta.days/365.25)}")
 
-except Exception as error:
-    print(f"This script requires an argument of DOB in the form DD-MM-YYYY.\nError: {error}")
+    print_results(today, date)
 
-
-# Alternatively this should also work:
-#age = (today.year - date.year) if (today.month - date.month > 0) or (today.month == date.month and  today.day - date.day >= 0) else (today.year - date.year - 1)
+except IndexError:
+    print(f"This script requires an argument: Date of birth in the format DD-MM-YYYY.\n example: ./age.py 01-01-2001")
+except ValueError as error:
+    print(f"There is an issue with your input: {error}")
